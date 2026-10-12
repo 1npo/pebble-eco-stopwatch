@@ -13,3 +13,7 @@ void       model_pause(void);
 void       model_reset(void);
 void       model_get_snapshot(TimerState *st, int64_t *start_ms, int64_t *accum_ms);
 void       model_restore(TimerState st, int64_t start_ms, int64_t accum_ms);
+uint8_t    model_lap_count(void);
+uint32_t   model_lap_ms(uint8_t index);
+bool       model_add_lap(void);
+void       model_restore_laps(const uint32_t *laps, uint8_t count);
