@@ -5,3 +5,4 @@
 void    settings_load(void);
 uint8_t settings_interval_s(void);
 Theme   settings_theme(void);
+void    settings_messaging_init(void);

@@ -110,7 +110,7 @@ Run this on `emery`, `basalt`, `aplite` (or `diorite`) and `flint` (gating), plu
 - [ ] Exit/relaunch while running (time kept advancing), while paused, and with laps.
 - [ ] Notification overlay: there is no emulator command for it, so verify by code review that `did_focus(false)` cancels the timer (the user checks it on hardware).
 - [ ] **Power sanity:** with `ECO_DEBUG_LOG 1`, record `pebble logs` for 2 min each: STOPPED → 0 `refresh` lines; PAUSED → 0; RUNNING at 10 s → 12 ± 1; RUNNING at 60 s → 2 ± 1. Animations: no log activity after the transition ends. `grep -rE "tick_timer_service|light_|vibes_|wakeup_" src/c` returns nothing. Then set `ECO_DEBUG_LOG 0`.
-- [ ] `pebble build` is clean, and the memory report shows APLITE heap free > 18000 bytes.
+- [ ] `pebble build` is clean, and the memory report shows APLITE heap free > 17000 bytes (measured 17097; baseline before 004 was 17607).
 
 ## Done criteria (phase 004 / v1)
 

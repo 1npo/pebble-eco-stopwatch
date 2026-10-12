@@ -3,6 +3,8 @@
 #include "anim.h"
 #include "config.h"
 #include "refresh.h"
+#include "settings.h"
+#include "theme.h"
 #include "timer_model.h"
 #include "ui.h"
 
@@ -132,6 +134,8 @@ void controller_on_focus(bool in_focus) {
 }
 
 void controller_on_settings_changed(void) {
+  theme_set(settings_theme());
+  ui_apply_theme();
   ui_on_interval_changed();
   refresh_reschedule();
 }
