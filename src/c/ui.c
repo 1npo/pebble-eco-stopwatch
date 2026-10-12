@@ -12,7 +12,7 @@
 static Window *s_window;
 static Layer *s_head, *s_laps, *s_bar;
 static GFont s_timer_font, s_small_font, s_text_font;
-static int16_t s_label_w, s_safe_w;
+static int16_t s_label_w;
 
 static void prv_interval_label(char *buf, size_t len) {
   snprintf(buf, len, "%ds", (int)settings_interval_s());
@@ -34,24 +34,18 @@ static void prv_cache_label_width(void) {
   char label[8];
   prv_interval_label(label, sizeof(label));
   s_label_w = prv_text_width(label);
-  prv_safeguard_label(label, sizeof(label));
-  s_safe_w = prv_text_width(label);
-}
-
-static int16_t prv_safe_extra(void) {
-  return settings_safeguard_min() ? SAFE_DY : 0;
 }
 
 int16_t ui_head_y(bool laps_shown) {
-  return laps_shown ? HEAD_Y_LAPS : HEAD_Y_CENTER - prv_safe_extra() / 2;
+  return laps_shown ? HEAD_Y_LAPS : HEAD_Y_CENTER - SUB2_DY / 2;
 }
 
 int16_t ui_rule_y(void) {
-  return RULE_Y + prv_safe_extra();
+  return RULE_Y + SUB2_DY;
 }
 
 uint8_t ui_lap_rows(void) {
-  return LAP_ROWS_VISIBLE - (settings_safeguard_min() ? SAFE_ROWS_LOST : 0);
+  return LAP_ROWS_VISIBLE - SUB2_ROWS_LOST;
 }
 
 static void prv_head_update(Layer *layer, GContext *ctx) {
@@ -74,24 +68,31 @@ static void prv_head_update(Layer *layer, GContext *ctx) {
   graphics_draw_text(ctx, verb, s_text_font, line, GTextOverflowModeTrailingEllipsis,
                      GTextAlignmentLeft, NULL);
 
+  // Second line, left-aligned under the verb: [cycle] 10s | [shield] 15m
+  const int16_t icon_gap = 3, sep_gap = 5;
+  GRect line2 = GRect(line.origin.x, SUB_Y + SUB2_DY, LINE_W, SUB_BOX_H);
+  int16_t x = line2.origin.x;
+  int16_t cy = line2.origin.y + CAP_TOP + REFRESH_ICON_D / 2;
   char label[8];
-  prv_interval_label(label, sizeof(label));
-  graphics_context_set_text_color(ctx, theme_fg());
-  graphics_draw_text(ctx, label, s_text_font, line, GTextOverflowModeTrailingEllipsis,
-                     GTextAlignmentRight, NULL);
 
+  graphics_context_set_text_color(ctx, theme_fg());
   graphics_context_set_fill_color(ctx, theme_fg());
-  GPoint c = GPoint(line.origin.x + LINE_W - s_label_w - 3 - REFRESH_ICON_D / 2,
-                    SUB_Y + CAP_TOP + REFRESH_ICON_D / 2);
-  icon_cycle(ctx, c, REFRESH_ICON_D, REFRESH_THICK, true);
+  icon_cycle(ctx, GPoint(x + REFRESH_ICON_D / 2, cy), REFRESH_ICON_D, REFRESH_THICK, true);
+  x += REFRESH_ICON_D + icon_gap;
+  prv_interval_label(label, sizeof(label));
+  graphics_draw_text(ctx, label, s_text_font, GRect(x, line2.origin.y, LINE_W, SUB_BOX_H),
+                     GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+  x += s_label_w;
 
   if (settings_safeguard_min()) {
-    GRect line2 = GRect(line.origin.x, SUB_Y + SAFE_DY, LINE_W, SUB_BOX_H);
+    x += sep_gap;
+    graphics_fill_rect(ctx, GRect(x, cy - REFRESH_ICON_D / 2, 1, REFRESH_ICON_D), 0, GCornerNone);
+    x += 1 + sep_gap;
+    icon_shield(ctx, GPoint(x + REFRESH_ICON_D / 2, cy), REFRESH_ICON_D);
+    x += REFRESH_ICON_D + icon_gap;
     prv_safeguard_label(label, sizeof(label));
-    graphics_draw_text(ctx, label, s_text_font, line2, GTextOverflowModeTrailingEllipsis,
-                       GTextAlignmentRight, NULL);
-    icon_shield(ctx, GPoint(line2.origin.x + LINE_W - s_safe_w - 3 - REFRESH_ICON_D / 2,
-                            line2.origin.y + CAP_TOP + REFRESH_ICON_D / 2), REFRESH_ICON_D);
+    graphics_draw_text(ctx, label, s_text_font, GRect(x, line2.origin.y, LINE_W, SUB_BOX_H),
+                       GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
   }
 }
 
@@ -150,7 +151,7 @@ static void prv_bar_update(Layer *layer, GContext *ctx) {
 void ui_set_laps_layout(bool shown) {
   GRect h = layer_get_frame(s_head);
   h.origin.y = ui_head_y(shown);
-  h.size.h = HEAD_H + prv_safe_extra();
+  h.size.h = HEAD_H + SUB2_DY;
   layer_set_frame(s_head, h);
   GRect l = layer_get_frame(s_laps);
   l.origin.y = shown ? ui_rule_y() : SCREEN_H;
@@ -167,7 +168,7 @@ void ui_create(Window *w) {
   prv_cache_label_width();
 
   Layer *root = window_get_root_layer(w);
-  s_head = layer_create(GRect(0, HEAD_Y_CENTER, 2 * CONTENT_CX, HEAD_H + prv_safe_extra()));
+  s_head = layer_create(GRect(0, HEAD_Y_CENTER, 2 * CONTENT_CX, HEAD_H + SUB2_DY));
   layer_set_update_proc(s_head, prv_head_update);
   layer_add_child(root, s_head);
   s_laps = layer_create(GRect(0, ui_rule_y(), 2 * CONTENT_CX, SCREEN_H - ui_rule_y()));
