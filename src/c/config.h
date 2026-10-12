@@ -22,8 +22,8 @@
   #define ROW0_Y           3
   #define ROW_PITCH        17
   #define LAP_ROWS_VISIBLE 6
-  #define SAFE_DY          16
-  #define SAFE_ROWS_LOST   1
+  #define SUB2_DY          16
+  #define SUB2_ROWS_LOST   1
   #define ICON_SZ          15
   #define BAR_ICON_X       129
   #define BAR_SELECT_X     129
@@ -52,8 +52,8 @@
   #define ROW0_Y           3
   #define ROW_PITCH        17
   #define LAP_ROWS_VISIBLE 4
-  #define SAFE_DY          16
-  #define SAFE_ROWS_LOST   0
+  #define SUB2_DY          16
+  #define SUB2_ROWS_LOST   0
   #define ICON_SZ          15
   #define BAR_ICON_X       158
   #define BAR_SELECT_X     160
@@ -82,8 +82,8 @@
   #define ROW0_Y           4
   #define ROW_PITCH        22
   #define LAP_ROWS_VISIBLE 7
-  #define SAFE_DY          20
-  #define SAFE_ROWS_LOST   1
+  #define SUB2_DY          20
+  #define SUB2_ROWS_LOST   1
   #define ICON_SZ          19
   #define BAR_ICON_X       183
   #define BAR_SELECT_X     183
@@ -112,8 +112,8 @@
   #define ROW0_Y           4
   #define ROW_PITCH        22
   #define LAP_ROWS_VISIBLE 6
-  #define SAFE_DY          20
-  #define SAFE_ROWS_LOST   0
+  #define SUB2_DY          20
+  #define SUB2_ROWS_LOST   0
   #define ICON_SZ          19
   #define BAR_ICON_X       236
   #define BAR_SELECT_X     240
