@@ -4,7 +4,7 @@
 
 typedef enum { THEME_WOB = 0, THEME_BOW = 1, THEME_COLOR = 2 } Theme;
 
-void   theme_set(Theme t);
+void theme_set(Theme t);
 GColor theme_bg(void);
 GColor theme_fg(void);
 GColor theme_bar_bg(void);
