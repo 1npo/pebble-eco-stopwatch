@@ -11,7 +11,7 @@ A battery-first stopwatch: the screen redraws only every few seconds, not every 
 
 ## Description
 
-Eco Stopwatch is a stopwatch built to be left running for hours without draining your watch. Instead of redrawing every second, it updates the screen once every N seconds (10 by default, adjustable from 1 to 60) and once immediately on every button press. There is no tick service, no backlight use and no background wakeups. Elapsed time comes from wall-clock timestamps rather than counted ticks, so it stays exact at any refresh interval and keeps counting while the app is closed.
+Eco Stopwatch is a stopwatch built to be left running without draining your watch. Instead of redrawing every second, it updates the screen once every N seconds (10 by default, adjustable from 1 to 60) and once immediately on every button press. There is no tick service, no backlight use and no background wakeups. Elapsed time comes from wall-clock timestamps rather than counted ticks, so it stays exact at any refresh interval and keeps counting while the app is closed.
 
 **Features**
 - Big stacked hours / minutes / seconds display, with up to 99 laps (cumulative time at each press)

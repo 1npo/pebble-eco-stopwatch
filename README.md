@@ -115,7 +115,10 @@ the text), so every font resource is only about 2 KB.
 
 ## Acknowledgements
 
-The timer and text fonts are custom builds of
-[Iosevka](https://github.com/be5invis/Iosevka) by Renzhi Li (aka. Belleve
-Invis), used under the SIL Open Font License, Version 1.1. The license text is
-in [`resources/fonts/LICENSE-Iosevka-OFL.md`](resources/fonts/LICENSE-Iosevka-OFL.md).
+- The timer and text fonts are custom builds of
+  [Iosevka](https://github.com/be5invis/Iosevka) by Renzhi Li (aka. Belleve
+  Invis), used under the SIL Open Font License, Version 1.1. The license text is
+  in [`resources/fonts/LICENSE-Iosevka-OFL.md`](resources/fonts/LICENSE-Iosevka-OFL.md).
+- The "Stopwatch" app by Pebble and the "BIGSW" app by sethasaurus provided
+  design inspiration.
+- This project was built with assistance from Claude.
