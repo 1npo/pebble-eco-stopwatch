@@ -1,18 +1,28 @@
 # Eco Stopwatch
 
 A battery-first stopwatch for Pebble. The screen redraws only every N seconds
-(default 10) while running, plus once immediately on every button press.
+(default 10) while running, plus once immediately on every button press. An
+optional safeguard halts a forgotten timer at a limit you choose, with a buzz
+and a phone notification.
 
 ## Screenshots
 
-Emery (Pebble Time 2), Color theme:
+Emery (Pebble Time 2), Color theme, with a 15 minute safeguard set (the
+shield and `15m` under the refresh interval):
 
 | Stopped | Running, laps | Paused, scrolling |
 |---|---|---|
 | ![Stopped](docs/screenshots/emery-stopped.png) | ![Running with laps](docs/screenshots/emery-running-laps.png) | ![Paused, scrolling laps](docs/screenshots/emery-paused-scroll.png) |
 
-Other themes: Black on White (emery), White on Black (emery) and White on
-Black on a black & white watch (aplite).
+When the timer reaches the safeguard it stops at exactly that time and shows
+`HALTED`; only reset (⟲) leaves that state:
+
+| Halted by the safeguard |
+|---|
+| ![Halted](docs/screenshots/emery-halted.png) |
+
+Other themes, also with the safeguard on: Black on White (emery), White on
+Black (emery) and White on Black on a black & white watch (aplite).
 
 | Black on White | White on Black | Aplite |
 |---|---|---|
