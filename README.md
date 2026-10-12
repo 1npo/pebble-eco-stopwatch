@@ -8,7 +8,7 @@ the watch.
 ## Screenshots
 
 Emery (Pebble Time 2), Color theme, with a 15 minute safeguard set (the
-shield and `15m` under the refresh interval):
+shield and `15m` below the refresh interval):
 
 | Stopped | Running, laps | Paused, scrolling |
 |---|---|---|
@@ -44,7 +44,7 @@ The right-hand icon bar always shows what the three buttons do.
 - Laps show the cumulative time at the press: `LAP 01  00:00:12`.
 - While scrolling the lap list, reset is not available: press ▶ to resume
   first, then ⟲.
-- Past 100 hours the timer switches to a smaller font. The cap is 999:59:59.
+- The timer is stacked as hours, minutes and seconds, each tagged H, M or S. Past 99 hours the hours gain a third digit. The cap is 999:59:59.
 - Back exits the app. State (running, paused, laps) survives exiting.
 
 ## Settings
@@ -59,7 +59,7 @@ at once, including on a running timer, and are stored on the watch.
   time and shows `HALTED` (orange on the Color theme). Only reset (⟲) leaves
   that state. Laps are kept. A timer that passes the limit while the app is
   closed is halted at the limit on next launch. When enabled, the limit is
-  shown under the refresh interval as e.g. `15m` or `2h`. Halting a running
+  shown below the refresh interval as e.g. `15m` or `2h`. Halting a running
   timer buzzes the watch once (no buzz when it is halted at launch).
 - **Color Theme:** White on Black, Black on White, and (color watches only)
   Color: Black on White with a colored state verb (STOPPED red, RUNNING green,
@@ -84,8 +84,8 @@ aplite, basalt, chalk, diorite, emery, flint, gabbro.
 
 | | aplite / basalt / diorite / flint | chalk | emery | gabbro |
 |---|---|---|---|---|
-| Lap rows visible | 6 | 4 | 7 | 6 |
-| Timer font (shrunk) | 26 (22) | 26 (22) | 38 (34) | 38 (34) |
+| Lap rows visible | 3 | 3 | 3 | 4 |
+| Timer font | 38 | 38 | 56 | 56 |
 | Subtext font | 14 | 14 | 18 | 18 |
 
 Round screens (chalk, gabbro) show fewer rows because of the bezel.

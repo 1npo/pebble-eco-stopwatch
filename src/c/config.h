@@ -10,20 +10,20 @@
   // aplite, basalt, diorite, flint
   #define CONTENT_CX       57
   #define LINE_W           102
-  #define TIMER_BOX_H      34
-  #define TIMER_SMALL_DY   3
-  #define SUB_Y            29
+  #define TIMER_BOX_H      44
+  #define TIMER_PITCH      34
+  #define TAG_DY           24
+  #define TAG_X            4
   #define SUB_BOX_H        20
-  #define HEAD_H           49
-  #define HEAD_Y_CENTER    59
+  #define HEAD_H           112
+  #define HEAD_Y_CENTER    28
   #define HEAD_Y_LAPS      0
-  #define RULE_Y           48
+  #define RULE_Y           114
   #define RULE_THICK       1
   #define ROW0_Y           3
   #define ROW_PITCH        17
-  #define LAP_ROWS_VISIBLE 6
-  #define SUB2_DY          16
-  #define SUB2_ROWS_LOST   1
+  #define LAP_ROWS_VISIBLE 3
+  #define LINE_PITCH       16
   #define ICON_SZ          15
   #define BAR_ICON_X       129
   #define BAR_SELECT_X     129
@@ -34,26 +34,25 @@
   #define CAP_TOP          3
   #define RESET_THICK      2
   #define REFRESH_THICK    1
-  #define RES_FONT_TIMER       RESOURCE_ID_FONT_TIMER_26
-  #define RES_FONT_TIMER_SMALL RESOURCE_ID_FONT_TIMER_22
+  #define RES_FONT_TIMER       RESOURCE_ID_FONT_TIMER_38
   #define RES_FONT_TEXT        RESOURCE_ID_FONT_TEXT_14
 #elif defined(PBL_PLATFORM_CHALK)
   #define CONTENT_CX       82
   #define LINE_W           102
-  #define TIMER_BOX_H      34
-  #define TIMER_SMALL_DY   3
-  #define SUB_Y            29
+  #define TIMER_BOX_H      44
+  #define TIMER_PITCH      34
+  #define TAG_DY           24
+  #define TAG_X            16
   #define SUB_BOX_H        20
-  #define HEAD_H           49
-  #define HEAD_Y_CENTER    65
-  #define HEAD_Y_LAPS      21
-  #define RULE_Y           69
+  #define HEAD_H           112
+  #define HEAD_Y_CENTER    34
+  #define HEAD_Y_LAPS      8
+  #define RULE_Y           122
   #define RULE_THICK       1
   #define ROW0_Y           3
   #define ROW_PITCH        17
-  #define LAP_ROWS_VISIBLE 4
-  #define SUB2_DY          16
-  #define SUB2_ROWS_LOST   0
+  #define LAP_ROWS_VISIBLE 3
+  #define LINE_PITCH       16
   #define ICON_SZ          15
   #define BAR_ICON_X       158
   #define BAR_SELECT_X     160
@@ -64,26 +63,25 @@
   #define CAP_TOP          3
   #define RESET_THICK      2
   #define REFRESH_THICK    1
-  #define RES_FONT_TIMER       RESOURCE_ID_FONT_TIMER_26
-  #define RES_FONT_TIMER_SMALL RESOURCE_ID_FONT_TIMER_22
+  #define RES_FONT_TIMER       RESOURCE_ID_FONT_TIMER_38
   #define RES_FONT_TEXT        RESOURCE_ID_FONT_TEXT_14
 #elif defined(PBL_PLATFORM_EMERY)
   #define CONTENT_CX       83
   #define LINE_W           148
-  #define TIMER_BOX_H      46
-  #define TIMER_SMALL_DY   2
-  #define SUB_Y            42
+  #define TIMER_BOX_H      64
+  #define TIMER_PITCH      46
+  #define TAG_DY           35
+  #define TAG_X            4
   #define SUB_BOX_H        24
-  #define HEAD_H           66
-  #define HEAD_Y_CENTER    79
+  #define HEAD_H           156
+  #define HEAD_Y_CENTER    36
   #define HEAD_Y_LAPS      0
-  #define RULE_Y           66
+  #define RULE_Y           158
   #define RULE_THICK       2
   #define ROW0_Y           4
   #define ROW_PITCH        22
-  #define LAP_ROWS_VISIBLE 7
-  #define SUB2_DY          20
-  #define SUB2_ROWS_LOST   1
+  #define LAP_ROWS_VISIBLE 3
+  #define LINE_PITCH       20
   #define ICON_SZ          19
   #define BAR_ICON_X       183
   #define BAR_SELECT_X     183
@@ -94,26 +92,25 @@
   #define CAP_TOP          4
   #define RESET_THICK      3
   #define REFRESH_THICK    2
-  #define RES_FONT_TIMER       RESOURCE_ID_FONT_TIMER_38
-  #define RES_FONT_TIMER_SMALL RESOURCE_ID_FONT_TIMER_34
+  #define RES_FONT_TIMER       RESOURCE_ID_FONT_TIMER_56
   #define RES_FONT_TEXT        RESOURCE_ID_FONT_TEXT_18
 #elif defined(PBL_PLATFORM_GABBRO)
   #define CONTENT_CX       130
   #define LINE_W           148
-  #define TIMER_BOX_H      46
-  #define TIMER_SMALL_DY   2
-  #define SUB_Y            42
+  #define TIMER_BOX_H      64
+  #define TIMER_PITCH      46
+  #define TAG_DY           35
+  #define TAG_X            16
   #define SUB_BOX_H        24
-  #define HEAD_H           66
-  #define HEAD_Y_CENTER    95
-  #define HEAD_Y_LAPS      19
-  #define RULE_Y           85
+  #define HEAD_H           156
+  #define HEAD_Y_CENTER    52
+  #define HEAD_Y_LAPS      12
+  #define RULE_Y           170
   #define RULE_THICK       2
   #define ROW0_Y           4
   #define ROW_PITCH        22
-  #define LAP_ROWS_VISIBLE 6
-  #define SUB2_DY          20
-  #define SUB2_ROWS_LOST   0
+  #define LAP_ROWS_VISIBLE 4
+  #define LINE_PITCH       20
   #define ICON_SZ          19
   #define BAR_ICON_X       236
   #define BAR_SELECT_X     240
@@ -124,8 +121,7 @@
   #define CAP_TOP          4
   #define RESET_THICK      3
   #define REFRESH_THICK    2
-  #define RES_FONT_TIMER       RESOURCE_ID_FONT_TIMER_38
-  #define RES_FONT_TIMER_SMALL RESOURCE_ID_FONT_TIMER_34
+  #define RES_FONT_TIMER       RESOURCE_ID_FONT_TIMER_56
   #define RES_FONT_TEXT        RESOURCE_ID_FONT_TEXT_18
 #else
   #error "unsupported platform"

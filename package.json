@@ -35,20 +35,7 @@
       "media": [
         {
           "type": "font",
-          "name": "FONT_TIMER_26",
-          "file": "fonts/IosevkaCustomForPebble/TTF/IosevkaCustomForPebble-Heavy.ttf",
-          "characterRegex": "[0-9:]",
-          "targetPlatforms": [
-            "aplite",
-            "basalt",
-            "chalk",
-            "diorite",
-            "flint"
-          ]
-        },
-        {
-          "type": "font",
-          "name": "FONT_TIMER_22",
+          "name": "FONT_TIMER_38",
           "file": "fonts/IosevkaCustomForPebble/TTF/IosevkaCustomForPebble-Heavy.ttf",
           "characterRegex": "[0-9:]",
           "targetPlatforms": [
@@ -74,17 +61,7 @@
         },
         {
           "type": "font",
-          "name": "FONT_TIMER_38",
-          "file": "fonts/IosevkaCustomForPebble/TTF/IosevkaCustomForPebble-Heavy.ttf",
-          "characterRegex": "[0-9:]",
-          "targetPlatforms": [
-            "emery",
-            "gabbro"
-          ]
-        },
-        {
-          "type": "font",
-          "name": "FONT_TIMER_34",
+          "name": "FONT_TIMER_56",
           "file": "fonts/IosevkaCustomForPebble/TTF/IosevkaCustomForPebble-Heavy.ttf",
           "characterRegex": "[0-9:]",
           "targetPlatforms": [
