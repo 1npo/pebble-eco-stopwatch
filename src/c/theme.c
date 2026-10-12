@@ -36,6 +36,7 @@ GColor theme_verb(TimerState s) {
       case TS_STOPPED: return GColorRed;
       case TS_PAUSED:  return GColorLimerick;  // plain yellow is unreadable on white
       case TS_RUNNING: return GColorDarkGreen;
+      case TS_TERMINATED: return GColorOrange;
     }
   }
 #endif

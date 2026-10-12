@@ -44,9 +44,17 @@ at once, including on a running timer, and are stored on the watch.
 
 - **Screen Refresh Interval:** 1, 2, 5, 10 (default), 15, 20, 30 or 60 seconds.
   Shown beneath the timer as e.g. `10s`.
+- **Safeguard:** None (default), or 5, 10, 15, 30, 45 minutes, or 1, 2, 3, 4, 6,
+  8, 12, 24 hours. A running timer that reaches the limit stops at exactly that
+  time and shows `HALTED` (orange on the Color theme). Only reset (⟲) leaves
+  that state. Laps are kept. A timer that passes the limit while the app is
+  closed is halted at the limit on next launch. When enabled, the limit is
+  shown under the refresh interval as e.g. `15m` or `2h`. Halting a running
+  timer buzzes the watch and posts a phone notification (via the phone app, so
+  it needs the phone connected; no notification when halted at launch).
 - **Color Theme:** White on Black, Black on White, and (color watches only)
   Color: Black on White with a colored state verb (STOPPED red, RUNNING green,
-  PAUSED yellow; darker shades so they stay readable on white). Black & white
+  PAUSED yellow, HALTED orange; darker shades so they stay readable on white). Black & white
   watches (aplite, diorite, flint) offer only the first two.
 
 ## Battery design

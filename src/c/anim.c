@@ -23,9 +23,9 @@ static void prv_run(bool show, uint32_t ms) {
   Layer *laps = ui_laps_layer();
   if (show) layer_set_hidden(laps, false);
   GRect head_to = layer_get_frame(head);
-  head_to.origin.y = show ? HEAD_Y_LAPS : HEAD_Y_CENTER;
+  head_to.origin.y = ui_head_y(show);
   GRect laps_to = layer_get_frame(laps);
-  laps_to.origin.y = show ? RULE_Y : SCREEN_H;
+  laps_to.origin.y = show ? ui_rule_y() : SCREEN_H;
   Animation *a = property_animation_get_animation(
       property_animation_create_layer_frame(head, NULL, &head_to));
   Animation *b = property_animation_get_animation(

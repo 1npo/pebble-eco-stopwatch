@@ -9,7 +9,7 @@ void persist_load_all(void) {
   if (persist_read_int(PKEY_SCHEMA) != PERSIST_SCHEMA_VERSION) return;
   PersistTimer t;
   if (persist_read_data(PKEY_TIMER, &t, sizeof(t)) != (int)sizeof(t)) return;
-  if (t.state > TS_PAUSED || t.accum_ms < 0) return;
+  if (t.state > TS_TERMINATED || t.accum_ms < 0) return;
   model_restore((TimerState)t.state, t.start_ms, t.accum_ms);
 
   uint32_t laps[MAX_LAPS];

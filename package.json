@@ -28,7 +28,9 @@
     },
     "messageKeys": [
       "RefreshInterval",
-      "Theme"
+      "Theme",
+      "Safeguard",
+      "Halted"
     ],
     "resources": {
       "media": [
@@ -62,7 +64,7 @@
           "type": "font",
           "name": "FONT_TEXT_14",
           "file": "fonts/IosevkaCustomForPebbleNarrow/TTF/IosevkaCustomForPebbleNarrow-Bold.ttf",
-          "characterRegex": "[ 0-9:A-Zs]",
+          "characterRegex": "[ 0-9:A-Zsmh]",
           "targetPlatforms": [
             "aplite",
             "basalt",
@@ -95,7 +97,7 @@
           "type": "font",
           "name": "FONT_TEXT_18",
           "file": "fonts/IosevkaCustomForPebbleNarrow/TTF/IosevkaCustomForPebbleNarrow-Bold.ttf",
-          "characterRegex": "[ 0-9:A-Zs]",
+          "characterRegex": "[ 0-9:A-Zsmh]",
           "targetPlatforms": [
             "emery",
             "gabbro"

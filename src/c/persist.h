@@ -9,6 +9,7 @@
 #define PKEY_LAPS_B    4   // data, uint32_t[<=49]  laps 51..99  (003)
 #define PKEY_INTERVAL  5   // int, seconds          (004)
 #define PKEY_THEME     6   // int, Theme            (004)
+#define PKEY_SAFEGUARD 7   // int, minutes, 0 = off
 
 typedef struct {
   uint8_t state;       // TimerState

@@ -12,18 +12,46 @@
 static Window *s_window;
 static Layer *s_head, *s_laps, *s_bar;
 static GFont s_timer_font, s_small_font, s_text_font;
-static int16_t s_label_w;
+static int16_t s_label_w, s_safe_w;
 
 static void prv_interval_label(char *buf, size_t len) {
   snprintf(buf, len, "%ds", (int)settings_interval_s());
 }
 
+static void prv_safeguard_label(char *buf, size_t len) {
+  uint16_t min = settings_safeguard_min();
+  if (min % 60 == 0) snprintf(buf, len, "%dh", (int)(min / 60));
+  else snprintf(buf, len, "%dm", (int)min);
+}
+
+static int16_t prv_text_width(const char *label) {
+  return graphics_text_layout_get_content_size(
+      label, s_text_font, GRect(0, 0, LINE_W, SUB_BOX_H),
+      GTextOverflowModeTrailingEllipsis, GTextAlignmentRight).w;
+}
+
 static void prv_cache_label_width(void) {
   char label[8];
   prv_interval_label(label, sizeof(label));
-  s_label_w = graphics_text_layout_get_content_size(
-      label, s_text_font, GRect(0, 0, LINE_W, SUB_BOX_H),
-      GTextOverflowModeTrailingEllipsis, GTextAlignmentRight).w;
+  s_label_w = prv_text_width(label);
+  prv_safeguard_label(label, sizeof(label));
+  s_safe_w = prv_text_width(label);
+}
+
+static int16_t prv_safe_extra(void) {
+  return settings_safeguard_min() ? SAFE_DY : 0;
+}
+
+int16_t ui_head_y(bool laps_shown) {
+  return laps_shown ? HEAD_Y_LAPS : HEAD_Y_CENTER - prv_safe_extra() / 2;
+}
+
+int16_t ui_rule_y(void) {
+  return RULE_Y + prv_safe_extra();
+}
+
+uint8_t ui_lap_rows(void) {
+  return LAP_ROWS_VISIBLE - (settings_safeguard_min() ? SAFE_ROWS_LOST : 0);
 }
 
 static void prv_head_update(Layer *layer, GContext *ctx) {
@@ -39,7 +67,8 @@ static void prv_head_update(Layer *layer, GContext *ctx) {
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
 
   TimerState st = model_state();
-  const char *verb = st == TS_RUNNING ? "RUNNING" : st == TS_PAUSED ? "PAUSED" : "STOPPED";
+  const char *verb = st == TS_RUNNING ? "RUNNING" : st == TS_PAUSED ? "PAUSED" :
+                     st == TS_TERMINATED ? "HALTED" : "STOPPED";
   GRect line = GRect(CONTENT_CX - LINE_W / 2, SUB_Y, LINE_W, SUB_BOX_H);
   graphics_context_set_text_color(ctx, theme_verb(st));
   graphics_draw_text(ctx, verb, s_text_font, line, GTextOverflowModeTrailingEllipsis,
@@ -55,6 +84,15 @@ static void prv_head_update(Layer *layer, GContext *ctx) {
   GPoint c = GPoint(line.origin.x + LINE_W - s_label_w - 3 - REFRESH_ICON_D / 2,
                     SUB_Y + CAP_TOP + REFRESH_ICON_D / 2);
   icon_cycle(ctx, c, REFRESH_ICON_D, REFRESH_THICK, true);
+
+  if (settings_safeguard_min()) {
+    GRect line2 = GRect(line.origin.x, SUB_Y + SAFE_DY, LINE_W, SUB_BOX_H);
+    prv_safeguard_label(label, sizeof(label));
+    graphics_draw_text(ctx, label, s_text_font, line2, GTextOverflowModeTrailingEllipsis,
+                       GTextAlignmentRight, NULL);
+    icon_shield(ctx, GPoint(line2.origin.x + LINE_W - s_safe_w - 3 - REFRESH_ICON_D / 2,
+                            line2.origin.y + CAP_TOP + REFRESH_ICON_D / 2), REFRESH_ICON_D);
+  }
 }
 
 static void prv_laps_update(Layer *layer, GContext *ctx) {
@@ -64,7 +102,7 @@ static void prv_laps_update(Layer *layer, GContext *ctx) {
   uint8_t count = model_lap_count();
   uint8_t first = controller_scroll_first();
   uint8_t rows = count - first;
-  if (rows > LAP_ROWS_VISIBLE) rows = LAP_ROWS_VISIBLE;
+  if (rows > ui_lap_rows()) rows = ui_lap_rows();
   graphics_context_set_text_color(ctx, theme_fg());
   for (uint8_t i = 0; i < rows; i++) {
     char hms[12];
@@ -98,12 +136,12 @@ static void prv_bar_update(Layer *layer, GContext *ctx) {
       icon_cycle(ctx, down, ICON_SZ, RESET_THICK, false);
       break;
     case UI_PAUSED:
-      icon_play(ctx, sel, ICON_SZ);
+      if (model_state() != TS_TERMINATED) icon_play(ctx, sel, ICON_SZ);
       icon_cycle(ctx, down, ICON_SZ, RESET_THICK, false);
       break;
     case UI_PAUSED_SCROLL:
       icon_up(ctx, up, ICON_SZ);
-      icon_play(ctx, sel, ICON_SZ);
+      if (model_state() != TS_TERMINATED) icon_play(ctx, sel, ICON_SZ);
       icon_down(ctx, down, ICON_SZ);
       break;
   }
@@ -111,10 +149,12 @@ static void prv_bar_update(Layer *layer, GContext *ctx) {
 
 void ui_set_laps_layout(bool shown) {
   GRect h = layer_get_frame(s_head);
-  h.origin.y = shown ? HEAD_Y_LAPS : HEAD_Y_CENTER;
+  h.origin.y = ui_head_y(shown);
+  h.size.h = HEAD_H + prv_safe_extra();
   layer_set_frame(s_head, h);
   GRect l = layer_get_frame(s_laps);
-  l.origin.y = shown ? RULE_Y : SCREEN_H;
+  l.origin.y = shown ? ui_rule_y() : SCREEN_H;
+  l.size.h = SCREEN_H - ui_rule_y();
   layer_set_frame(s_laps, l);
   layer_set_hidden(s_laps, !shown);
 }
@@ -127,10 +167,10 @@ void ui_create(Window *w) {
   prv_cache_label_width();
 
   Layer *root = window_get_root_layer(w);
-  s_head = layer_create(GRect(0, HEAD_Y_CENTER, 2 * CONTENT_CX, HEAD_H));
+  s_head = layer_create(GRect(0, HEAD_Y_CENTER, 2 * CONTENT_CX, HEAD_H + prv_safe_extra()));
   layer_set_update_proc(s_head, prv_head_update);
   layer_add_child(root, s_head);
-  s_laps = layer_create(GRect(0, RULE_Y, 2 * CONTENT_CX, SCREEN_H - RULE_Y));
+  s_laps = layer_create(GRect(0, ui_rule_y(), 2 * CONTENT_CX, SCREEN_H - ui_rule_y()));
   layer_set_update_proc(s_laps, prv_laps_update);
   layer_add_child(root, s_laps);
   ui_set_laps_layout(model_lap_count() > 0);
@@ -165,9 +205,12 @@ void ui_apply_theme(void) {
   layer_mark_dirty(s_bar);
 }
 
-void ui_on_interval_changed(void) {
+void ui_on_settings_changed(void) {
   prv_cache_label_width();
+  anim_cancel();
+  ui_set_laps_layout(model_lap_count() > 0);
   layer_mark_dirty(s_head);
+  layer_mark_dirty(s_laps);
 }
 
 Layer *ui_head_layer(void) { return s_head; }
