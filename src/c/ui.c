@@ -11,8 +11,8 @@
 
 static Window *s_window;
 static Layer *s_head, *s_laps, *s_bar;
-static GFont s_timer_font, s_small_font, s_text_font;
-static int16_t s_label_w;
+static GFont s_timer_font, s_text_font;
+static int16_t s_label_w, s_tag_w, s_digit_w;
 
 static void prv_interval_label(char *buf, size_t len) {
   snprintf(buf, len, "%ds", (int)settings_interval_s());
@@ -36,62 +36,76 @@ static void prv_cache_label_width(void) {
   s_label_w = prv_text_width(label);
 }
 
+static void prv_cache_timer_metrics(void) {
+  s_tag_w = prv_text_width("M");
+  s_digit_w = graphics_text_layout_get_content_size(
+      "0", s_timer_font, GRect(0, 0, LINE_W, TIMER_BOX_H),
+      GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft).w;
+}
+
 int16_t ui_head_y(bool laps_shown) {
-  return laps_shown ? HEAD_Y_LAPS : HEAD_Y_CENTER - SUB2_DY / 2;
+  return laps_shown ? HEAD_Y_LAPS : HEAD_Y_CENTER;
 }
 
 int16_t ui_rule_y(void) {
-  return RULE_Y + SUB2_DY;
+  return RULE_Y;
 }
 
 uint8_t ui_lap_rows(void) {
-  return LAP_ROWS_VISIBLE - SUB2_ROWS_LOST;
+  return LAP_ROWS_VISIBLE;
 }
 
 static void prv_head_update(Layer *layer, GContext *ctx) {
-  const int16_t w = 2 * CONTENT_CX;
-  char text[12];
+  const int16_t tag_gap = 4, col_gap = 6, icon_gap = 3;
   uint32_t s = model_elapsed_s();
-  format_hms(text, sizeof(text), s);
+  if (s > MAX_ELAPSED_S) s = MAX_ELAPSED_S;
+  const int vals[3] = { (int)(s / 3600), (int)((s / 60) % 60), (int)(s % 60) };
+  const char *tags[3] = { "H", "M", "S" };
 
-  bool small = s >= SHRINK_AT_S;
+  // H/M/S stacked, each tag immediately left of its digits.
+  const int16_t dx = TAG_X + s_tag_w + tag_gap;
   graphics_context_set_text_color(ctx, theme_fg());
-  graphics_draw_text(ctx, text, small ? s_small_font : s_timer_font,
-                     GRect(0, small ? TIMER_SMALL_DY : 0, w, TIMER_BOX_H),
-                     GTextOverflowModeTrailingEllipsis, GTextAlignmentCenter, NULL);
+  for (int i = 0; i < 3; i++) {
+    char text[8];
+    snprintf(text, sizeof(text), "%02d", vals[i]);
+    int16_t y = i * TIMER_PITCH;
+    graphics_draw_text(ctx, tags[i], s_text_font, GRect(TAG_X, y + TAG_DY, s_tag_w + 4, SUB_BOX_H),
+                       GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+    graphics_draw_text(ctx, text, s_timer_font, GRect(dx, y, 3 * s_digit_w + 4, TIMER_BOX_H),
+                       GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+  }
+
+  // Status stack: verb, interval, safeguard; left-aligned, bottom line level with S.
+  const bool guard = settings_safeguard_min() != 0;
+  const int16_t sx = dx + 2 * s_digit_w + col_gap;
+  const int16_t w = 2 * CONTENT_CX - sx;
+  int16_t y = 2 * TIMER_PITCH + TAG_DY - (guard ? 2 : 1) * LINE_PITCH;
 
   TimerState st = model_state();
   const char *verb = st == TS_RUNNING ? "RUNNING" : st == TS_PAUSED ? "PAUSED" :
                      st == TS_TERMINATED ? "HALTED" : "STOPPED";
-  GRect line = GRect(CONTENT_CX - LINE_W / 2, SUB_Y, LINE_W, SUB_BOX_H);
   graphics_context_set_text_color(ctx, theme_verb(st));
-  graphics_draw_text(ctx, verb, s_text_font, line, GTextOverflowModeTrailingEllipsis,
-                     GTextAlignmentLeft, NULL);
+  graphics_draw_text(ctx, verb, s_text_font, GRect(sx, y, w, SUB_BOX_H),
+                     GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
+  y += LINE_PITCH;
 
-  // Second line, left-aligned under the verb: [cycle] 10s | [shield] 15m
-  const int16_t icon_gap = 3, sep_gap = 5;
-  GRect line2 = GRect(line.origin.x, SUB_Y + SUB2_DY, LINE_W, SUB_BOX_H);
-  int16_t x = line2.origin.x;
-  int16_t cy = line2.origin.y + CAP_TOP + REFRESH_ICON_D / 2;
   char label[8];
-
   graphics_context_set_text_color(ctx, theme_fg());
   graphics_context_set_fill_color(ctx, theme_fg());
-  icon_cycle(ctx, GPoint(x + REFRESH_ICON_D / 2, cy), REFRESH_ICON_D, REFRESH_THICK, true);
-  x += REFRESH_ICON_D + icon_gap;
+  int16_t cy = y + CAP_TOP + REFRESH_ICON_D / 2;
+  icon_cycle(ctx, GPoint(sx + REFRESH_ICON_D / 2, cy), REFRESH_ICON_D, REFRESH_THICK, true);
   prv_interval_label(label, sizeof(label));
-  graphics_draw_text(ctx, label, s_text_font, GRect(x, line2.origin.y, LINE_W, SUB_BOX_H),
+  graphics_draw_text(ctx, label, s_text_font,
+                     GRect(sx + REFRESH_ICON_D + icon_gap, y, w, SUB_BOX_H),
                      GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
-  x += s_label_w;
+  y += LINE_PITCH;
 
-  if (settings_safeguard_min()) {
-    x += sep_gap;
-    graphics_fill_rect(ctx, GRect(x, cy - REFRESH_ICON_D / 2, 1, REFRESH_ICON_D), 0, GCornerNone);
-    x += 1 + sep_gap;
-    icon_shield(ctx, GPoint(x + REFRESH_ICON_D / 2, cy), REFRESH_ICON_D);
-    x += REFRESH_ICON_D + icon_gap;
+  if (guard) {
+    cy = y + CAP_TOP + REFRESH_ICON_D / 2;
+    icon_shield(ctx, GPoint(sx + REFRESH_ICON_D / 2, cy), REFRESH_ICON_D);
     prv_safeguard_label(label, sizeof(label));
-    graphics_draw_text(ctx, label, s_text_font, GRect(x, line2.origin.y, LINE_W, SUB_BOX_H),
+    graphics_draw_text(ctx, label, s_text_font,
+                       GRect(sx + REFRESH_ICON_D + icon_gap, y, w, SUB_BOX_H),
                        GTextOverflowModeTrailingEllipsis, GTextAlignmentLeft, NULL);
   }
 }
@@ -151,7 +165,7 @@ static void prv_bar_update(Layer *layer, GContext *ctx) {
 void ui_set_laps_layout(bool shown) {
   GRect h = layer_get_frame(s_head);
   h.origin.y = ui_head_y(shown);
-  h.size.h = HEAD_H + SUB2_DY;
+  h.size.h = HEAD_H;
   layer_set_frame(s_head, h);
   GRect l = layer_get_frame(s_laps);
   l.origin.y = shown ? ui_rule_y() : SCREEN_H;
@@ -163,12 +177,12 @@ void ui_set_laps_layout(bool shown) {
 void ui_create(Window *w) {
   s_window = w;
   s_timer_font = fonts_load_custom_font(resource_get_handle(RES_FONT_TIMER));
-  s_small_font = fonts_load_custom_font(resource_get_handle(RES_FONT_TIMER_SMALL));
   s_text_font = fonts_load_custom_font(resource_get_handle(RES_FONT_TEXT));
   prv_cache_label_width();
+  prv_cache_timer_metrics();
 
   Layer *root = window_get_root_layer(w);
-  s_head = layer_create(GRect(0, HEAD_Y_CENTER, 2 * CONTENT_CX, HEAD_H + SUB2_DY));
+  s_head = layer_create(GRect(0, HEAD_Y_CENTER, 2 * CONTENT_CX, HEAD_H));
   layer_set_update_proc(s_head, prv_head_update);
   layer_add_child(root, s_head);
   s_laps = layer_create(GRect(0, ui_rule_y(), 2 * CONTENT_CX, SCREEN_H - ui_rule_y()));
@@ -186,7 +200,6 @@ void ui_destroy(void) {
   layer_destroy(s_laps);
   layer_destroy(s_bar);
   fonts_unload_custom_font(s_timer_font);
-  fonts_unload_custom_font(s_small_font);
   fonts_unload_custom_font(s_text_font);
 }
 
