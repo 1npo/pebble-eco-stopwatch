@@ -60,18 +60,9 @@ static bool prv_apply_safeguard(void) {
   return true;
 }
 
-// Buzz the watch and ask the phone to post a notification (if it is connected).
-static void prv_notify_halted(void) {
-  vibes_long_pulse();
-  DictionaryIterator *out;
-  if (app_message_outbox_begin(&out) != APP_MSG_OK) return;
-  dict_write_uint16(out, MESSAGE_KEY_Halted, settings_safeguard_min());
-  app_message_outbox_send();
-}
-
 bool controller_safeguard_check(void) {
   if (!prv_apply_safeguard()) return false;
-  prv_notify_halted();
+  vibes_long_pulse();
   prv_after_transition();
   return true;
 }

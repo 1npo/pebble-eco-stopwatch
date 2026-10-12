@@ -29,8 +29,7 @@
     "messageKeys": [
       "RefreshInterval",
       "Theme",
-      "Safeguard",
-      "Halted"
+      "Safeguard"
     ],
     "resources": {
       "media": [

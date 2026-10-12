@@ -2,8 +2,8 @@
 
 A battery-first stopwatch for Pebble. The screen redraws only every N seconds
 (default 10) while running, plus once immediately on every button press. An
-optional safeguard halts a forgotten timer at a limit you choose, with a buzz
-and a phone notification.
+optional safeguard halts a forgotten timer at a limit you choose and buzzes
+the watch.
 
 ## Screenshots
 
@@ -60,8 +60,7 @@ at once, including on a running timer, and are stored on the watch.
   that state. Laps are kept. A timer that passes the limit while the app is
   closed is halted at the limit on next launch. When enabled, the limit is
   shown under the refresh interval as e.g. `15m` or `2h`. Halting a running
-  timer buzzes the watch and posts a phone notification (via the phone app, so
-  it needs the phone connected; no notification when halted at launch).
+  timer buzzes the watch once (no buzz when it is halted at launch).
 - **Color Theme:** White on Black, Black on White, and (color watches only)
   Color: Black on White with a colored state verb (STOPPED red, RUNNING green,
   PAUSED yellow, HALTED orange; darker shades so they stay readable on white). Black & white
@@ -73,7 +72,8 @@ at once, including on a running timer, and are stored on the watch.
   elapsed time (the display reads :00, :10, :20, ...).
 - No timers at all while stopped, paused, or while the app is covered (for
   example by a notification); the timer is re-armed on focus.
-- No tick service, backlight, vibration or wakeups.
+- No tick service, backlight or wakeups. The only vibration is the single buzz
+  when the safeguard halts a timer.
 - Elapsed time is derived from wall-clock timestamps, never from counted
   ticks, so it stays exact at any interval and while the app is closed.
 - Settings and timer state are written only on change/exit.
