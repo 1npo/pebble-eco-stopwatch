@@ -28,7 +28,77 @@
       "dummy"
     ],
     "resources": {
-      "media": []
+      "media": [
+        {
+          "type": "font",
+          "name": "FONT_TIMER_26",
+          "file": "fonts/IosevkaCustomForPebble/TTF/IosevkaCustomForPebble-Heavy.ttf",
+          "characterRegex": "[0-9:]",
+          "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk",
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "FONT_TIMER_22",
+          "file": "fonts/IosevkaCustomForPebble/TTF/IosevkaCustomForPebble-Heavy.ttf",
+          "characterRegex": "[0-9:]",
+          "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk",
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "FONT_TEXT_14",
+          "file": "fonts/IosevkaCustomForPebbleNarrow/TTF/IosevkaCustomForPebbleNarrow-Regular.ttf",
+          "characterRegex": "[ 0-9:A-Zs]",
+          "targetPlatforms": [
+            "aplite",
+            "basalt",
+            "chalk",
+            "diorite",
+            "flint"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "FONT_TIMER_38",
+          "file": "fonts/IosevkaCustomForPebble/TTF/IosevkaCustomForPebble-Heavy.ttf",
+          "characterRegex": "[0-9:]",
+          "targetPlatforms": [
+            "emery",
+            "gabbro"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "FONT_TIMER_34",
+          "file": "fonts/IosevkaCustomForPebble/TTF/IosevkaCustomForPebble-Heavy.ttf",
+          "characterRegex": "[0-9:]",
+          "targetPlatforms": [
+            "emery",
+            "gabbro"
+          ]
+        },
+        {
+          "type": "font",
+          "name": "FONT_TEXT_18",
+          "file": "fonts/IosevkaCustomForPebbleNarrow/TTF/IosevkaCustomForPebbleNarrow-Regular.ttf",
+          "characterRegex": "[ 0-9:A-Zs]",
+          "targetPlatforms": [
+            "emery",
+            "gabbro"
+          ]
+        }
+      ]
     }
   }
 }
