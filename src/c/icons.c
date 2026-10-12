@@ -87,3 +87,14 @@ void icon_cycle(GContext *ctx, GPoint c, int16_t d, int16_t thick, bool clockwis
     prv_draw(ctx, s_rst, c);
   }
 }
+
+// Solid shield: full width for the top half, tapering to a point.
+void icon_shield(GContext *ctx, GPoint c, int16_t d) {
+  int16_t half = d * 9 / 20;
+  int16_t flat = d * 11 / 20;
+  for (int16_t y = 0; y < d; y++) {
+    int16_t hw = y < flat ? half : half * (d - y) / (d - flat);
+    if (hw < 1) hw = 1;
+    graphics_fill_rect(ctx, GRect(c.x - hw, c.y - d / 2 + y, 2 * hw, 1), 0, GCornerNone);
+  }
+}

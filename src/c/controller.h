@@ -8,3 +8,4 @@ uint8_t controller_scroll_first(void);
 void   controller_init(Window *w);
 void   controller_on_focus(bool in_focus);
 void   controller_on_settings_changed(void);
+bool   controller_safeguard_check(void);

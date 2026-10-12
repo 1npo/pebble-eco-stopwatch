@@ -50,7 +50,7 @@ uint32_t model_elapsed_s(void) {
 }
 
 void model_start(void) {
-  if (s_m.state == TS_RUNNING) return;
+  if (s_m.state == TS_RUNNING || s_m.state == TS_TERMINATED) return;
   s_m.start_ms = model_now_ms();
   s_m.state = TS_RUNNING;
 }
@@ -59,6 +59,13 @@ void model_pause(void) {
   if (s_m.state != TS_RUNNING) return;
   s_m.accum_ms += prv_segment_ms();
   s_m.state = TS_PAUSED;
+}
+
+// Freezes the timer at at_ms of elapsed time (the safeguard limit).
+void model_terminate(int64_t at_ms) {
+  if (s_m.state != TS_RUNNING) return;
+  s_m.accum_ms = at_ms;
+  s_m.state = TS_TERMINATED;
 }
 
 void model_reset(void) {

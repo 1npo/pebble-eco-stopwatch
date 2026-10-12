@@ -16,14 +16,15 @@ static bool s_scroll_cfg;  // click config currently has repeating UP/DOWN
 
 static uint8_t prv_newest_first(void) {
   uint8_t n = model_lap_count();
-  return n > LAP_ROWS_VISIBLE ? n - LAP_ROWS_VISIBLE : 0;
+  return n > ui_lap_rows() ? n - ui_lap_rows() : 0;
 }
 
 UiMode controller_mode(void) {
   switch (model_state()) {
     case TS_RUNNING: return UI_RUNNING;
     case TS_PAUSED:
-      return model_lap_count() > LAP_ROWS_VISIBLE ? UI_PAUSED_SCROLL : UI_PAUSED;
+    case TS_TERMINATED:
+      return model_lap_count() > ui_lap_rows() ? UI_PAUSED_SCROLL : UI_PAUSED;
     default:         return UI_STOPPED;
   }
 }
@@ -47,6 +48,32 @@ static void prv_after_transition(void) {
   refresh_reschedule();
   layer_mark_dirty(ui_bar_layer());
   ui_mark_dirty();
+}
+
+// Terminates the timer if it has reached the safeguard limit. True if it did.
+static bool prv_apply_safeguard(void) {
+  uint16_t min = settings_safeguard_min();
+  int64_t limit_ms = (int64_t)min * 60000;
+  if (!min || model_state() != TS_RUNNING || model_elapsed_ms() < limit_ms) return false;
+  model_terminate(limit_ms);
+  s_scroll_first = prv_newest_first();
+  return true;
+}
+
+// Buzz the watch and ask the phone to post a notification (if it is connected).
+static void prv_notify_halted(void) {
+  vibes_long_pulse();
+  DictionaryIterator *out;
+  if (app_message_outbox_begin(&out) != APP_MSG_OK) return;
+  dict_write_uint16(out, MESSAGE_KEY_Halted, settings_safeguard_min());
+  app_message_outbox_send();
+}
+
+bool controller_safeguard_check(void) {
+  if (!prv_apply_safeguard()) return false;
+  prv_notify_halted();
+  prv_after_transition();
+  return true;
 }
 
 static void prv_up(ClickRecognizerRef ref, void *ctx) {
@@ -74,6 +101,7 @@ static void prv_select(ClickRecognizerRef ref, void *ctx) {
     case UI_STOPPED:
     case UI_PAUSED:
     case UI_PAUSED_SCROLL:
+      if (model_state() == TS_TERMINATED) return;  // only reset leaves this state
       model_start();
       break;
     case UI_RUNNING:
@@ -118,6 +146,7 @@ static void prv_click_config(void *ctx) {
 
 void controller_init(Window *w) {
   s_window = w;
+  prv_apply_safeguard();  // a timer that ran past the limit while the app was closed
   s_scroll_first = prv_newest_first();
   s_scroll_cfg = controller_mode() == UI_PAUSED_SCROLL;
   window_set_click_config_provider(w, prv_click_config);
@@ -126,6 +155,7 @@ void controller_init(Window *w) {
 void controller_on_focus(bool in_focus) {
   refresh_set_focus(in_focus);
   if (in_focus) {
+    if (controller_safeguard_check()) return;
     ui_mark_dirty();
     refresh_reschedule();
   } else {
@@ -136,6 +166,8 @@ void controller_on_focus(bool in_focus) {
 void controller_on_settings_changed(void) {
   theme_set(settings_theme());
   ui_apply_theme();
-  ui_on_interval_changed();
-  refresh_reschedule();
+  ui_on_settings_changed();
+  prv_apply_safeguard();
+  if (s_scroll_first > prv_newest_first()) s_scroll_first = prv_newest_first();
+  prv_after_transition();
 }

@@ -8,6 +8,7 @@
 
 static uint8_t s_interval_s = DEFAULT_INTERVAL_S;
 static Theme s_theme = DEFAULT_THEME;
+static uint16_t s_safeguard_min = 0;
 
 static uint8_t prv_valid_interval(int32_t v) {
   static const uint8_t ok[] = { 1, 2, 5, 10, 15, 20, 30, 60 };
@@ -17,6 +18,14 @@ static uint8_t prv_valid_interval(int32_t v) {
   return DEFAULT_INTERVAL_S;
 }
 
+static uint16_t prv_valid_safeguard(int32_t v) {
+  static const uint16_t ok[] = { 5, 10, 15, 30, 45, 60, 120, 180, 240, 360, 480, 720, 1440 };
+  for (uint32_t i = 0; i < sizeof(ok) / sizeof(ok[0]); i++) {
+    if (ok[i] == v) return ok[i];
+  }
+  return 0;
+}
+
 static Theme prv_valid_theme(int32_t v) {
   return (v < 0 || v > THEME_COLOR) ? DEFAULT_THEME : (Theme)v;
 }
@@ -24,11 +33,15 @@ static Theme prv_valid_theme(int32_t v) {
 void settings_load(void) {
   s_interval_s = DEFAULT_INTERVAL_S;
   s_theme = DEFAULT_THEME;
+  s_safeguard_min = 0;
   if (persist_exists(PKEY_INTERVAL)) {
     s_interval_s = prv_valid_interval(persist_read_int(PKEY_INTERVAL));
   }
   if (persist_exists(PKEY_THEME)) {
     s_theme = prv_valid_theme(persist_read_int(PKEY_THEME));
+  }
+  if (persist_exists(PKEY_SAFEGUARD)) {
+    s_safeguard_min = prv_valid_safeguard(persist_read_int(PKEY_SAFEGUARD));
   }
 }
 
@@ -38,6 +51,10 @@ uint8_t settings_interval_s(void) {
 
 Theme settings_theme(void) {
   return s_theme;
+}
+
+uint16_t settings_safeguard_min(void) {
+  return s_safeguard_min;
 }
 
 // Clay select values arrive as C strings; accept int tuples too. -1 if unparsable.
@@ -82,6 +99,12 @@ static void prv_inbox_received(DictionaryIterator *iter, void *ctx) {
   if (t) {
     s_theme = prv_valid_theme(prv_tuple_int(t));
     persist_write_int(PKEY_THEME, s_theme);
+    changed = true;
+  }
+  t = dict_find(iter, MESSAGE_KEY_Safeguard);
+  if (t) {
+    s_safeguard_min = prv_valid_safeguard(prv_tuple_int(t));
+    persist_write_int(PKEY_SAFEGUARD, s_safeguard_min);
     changed = true;
   }
   if (changed) controller_on_settings_changed();
