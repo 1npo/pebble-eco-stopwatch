@@ -10,8 +10,13 @@ static bool s_focused = true;
 
 static void prv_fire(void *ctx) {
   s_timer = NULL;
-  ECO_LOG("refresh");
-  ui_mark_dirty();
+  // Some clocks (basalt emulator) fire the timer up to ~1 s before the boundary.
+  // Skip the redraw then; the re-arm below fires again on the boundary.
+  uint32_t iv = settings_interval_s() * 1000;
+  if (model_elapsed_ms() % iv <= iv / 2) {
+    ECO_LOG("refresh");
+    ui_mark_dirty();
+  }
   refresh_reschedule();
 }
 

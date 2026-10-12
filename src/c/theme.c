@@ -7,12 +7,18 @@ void theme_set(Theme t) {
   s_theme = t;
 }
 
+// Black on White, and Color (which only differs by its verb colours). On B&W
+// watches a stored Color renders as White on Black.
+static bool prv_light(void) {
+  return s_theme == THEME_BOW || (s_theme == THEME_COLOR && PBL_IF_COLOR_ELSE(true, false));
+}
+
 GColor theme_bg(void) {
-  return s_theme == THEME_BOW ? GColorWhite : GColorBlack;
+  return prv_light() ? GColorWhite : GColorBlack;
 }
 
 GColor theme_fg(void) {
-  return s_theme == THEME_BOW ? GColorBlack : GColorWhite;
+  return prv_light() ? GColorBlack : GColorWhite;
 }
 
 GColor theme_bar_bg(void) {
@@ -28,8 +34,8 @@ GColor theme_verb(TimerState s) {
   if (s_theme == THEME_COLOR) {
     switch (s) {
       case TS_STOPPED: return GColorRed;
-      case TS_PAUSED:  return GColorYellow;
-      case TS_RUNNING: return GColorGreen;
+      case TS_PAUSED:  return GColorLimerick;  // plain yellow is unreadable on white
+      case TS_RUNNING: return GColorDarkGreen;
     }
   }
 #endif

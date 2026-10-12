@@ -32,6 +32,7 @@ static void prv_init(void) {
   window_set_window_handlers(s_window, (WindowHandlers){ .load = prv_load, .unload = prv_unload });
   controller_init(s_window);
   window_stack_push(s_window, true);
+  settings_messaging_init();
   app_focus_service_subscribe_handlers((AppFocusHandlers){ .did_focus = prv_did_focus });
   refresh_reschedule();
 }

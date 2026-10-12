@@ -1,12 +1,14 @@
 {
   "name": "pebble-eco-stopwatch",
-  "author": "MakeAwesomeHappen",
+  "author": "Nick OMalley <github.com/1npo>",
   "version": "1.0.0",
   "keywords": [
     "pebble-app"
   ],
   "private": true,
-  "dependencies": {},
+  "dependencies": {
+    "@rebble/clay": "^1.1.0"
+  },
   "pebble": {
     "displayName": "Eco Stopwatch",
     "uuid": "6b92e9f0-10a7-410f-9de8-cfc49a529ef1",
@@ -25,7 +27,8 @@
       "watchface": false
     },
     "messageKeys": [
-      "dummy"
+      "RefreshInterval",
+      "Theme"
     ],
     "resources": {
       "media": [
