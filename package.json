@@ -61,7 +61,7 @@
         {
           "type": "font",
           "name": "FONT_TEXT_14",
-          "file": "fonts/IosevkaCustomForPebbleNarrow/TTF/IosevkaCustomForPebbleNarrow-Regular.ttf",
+          "file": "fonts/IosevkaCustomForPebbleNarrow/TTF/IosevkaCustomForPebbleNarrow-Bold.ttf",
           "characterRegex": "[ 0-9:A-Zs]",
           "targetPlatforms": [
             "aplite",
@@ -94,7 +94,7 @@
         {
           "type": "font",
           "name": "FONT_TEXT_18",
-          "file": "fonts/IosevkaCustomForPebbleNarrow/TTF/IosevkaCustomForPebbleNarrow-Regular.ttf",
+          "file": "fonts/IosevkaCustomForPebbleNarrow/TTF/IosevkaCustomForPebbleNarrow-Bold.ttf",
           "characterRegex": "[ 0-9:A-Zs]",
           "targetPlatforms": [
             "emery",
