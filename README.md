@@ -108,7 +108,14 @@ not `pebble-clay`, which does not build for flint or gabbro. Set
 Iosevka Custom for Pebble, in `resources/fonts/`:
 
 - `IosevkaCustomForPebble-Heavy.ttf` for the timer.
-- `IosevkaCustomForPebbleNarrow-Regular.ttf` for the subtext and lap rows.
+- `IosevkaCustomForPebbleNarrow-Bold.ttf` for the subtext and lap rows.
 
-Each is subset with `characterRegex` (`[0-9:]` for the timer, `[ 0-9:A-Zs]` for
+Each is subset with `characterRegex` (`[0-9:]` for the timer, `[ 0-9:A-Zsmh]` for
 the text), so every font resource is only about 2 KB.
+
+## Acknowledgements
+
+The timer and text fonts are custom builds of
+[Iosevka](https://github.com/be5invis/Iosevka) by Renzhi Li (aka. Belleve
+Invis), used under the SIL Open Font License, Version 1.1. The license text is
+in [`resources/fonts/LICENSE-Iosevka-OFL.md`](resources/fonts/LICENSE-Iosevka-OFL.md).
