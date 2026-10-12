@@ -9,11 +9,14 @@ static struct {
 } s_m;
 
 static int64_t s_last_now_ms;
+static uint32_t s_laps[MAX_LAPS];
+static uint8_t s_lap_count;
 
 void model_init(void) {
   s_m.state = TS_STOPPED;
   s_m.start_ms = 0;
   s_m.accum_ms = 0;
+  s_lap_count = 0;
 }
 
 TimerState model_state(void) {
@@ -72,4 +75,24 @@ void model_restore(TimerState st, int64_t start_ms, int64_t accum_ms) {
   s_m.state = st;
   s_m.start_ms = start_ms;
   s_m.accum_ms = accum_ms;
+}
+
+uint8_t model_lap_count(void) {
+  return s_lap_count;
+}
+
+uint32_t model_lap_ms(uint8_t index) {
+  return index < s_lap_count ? s_laps[index] : 0;
+}
+
+bool model_add_lap(void) {
+  if (s_m.state != TS_RUNNING || s_lap_count >= MAX_LAPS) return false;
+  s_laps[s_lap_count++] = (uint32_t)model_elapsed_ms();
+  return true;
+}
+
+void model_restore_laps(const uint32_t *laps, uint8_t count) {
+  if (count > MAX_LAPS) count = MAX_LAPS;
+  memcpy(s_laps, laps, count * sizeof(uint32_t));
+  s_lap_count = count;
 }
