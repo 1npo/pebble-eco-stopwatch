@@ -39,7 +39,7 @@ static Theme prv_valid_theme(int32_t v)
 
 static FontChoice prv_valid_font(int32_t v)
 {
-	return v == FONT_SYSTEM ? FONT_SYSTEM : FONT_IOSEVKA;
+	return (v < 0 || v >= FONT_COUNT) ? FONT_IOSEVKA : (FontChoice)v;
 }
 
 void settings_load(void)

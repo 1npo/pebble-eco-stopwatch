@@ -2,7 +2,14 @@
 #include <pebble.h>
 #include "theme.h"
 
-typedef enum { FONT_IOSEVKA = 0, FONT_SYSTEM = 1 } FontChoice;
+typedef enum {
+	FONT_IOSEVKA = 0,
+	FONT_GOTHIC,
+	FONT_LECO,
+	FONT_BITHAM,
+	FONT_DROID_SERIF,
+	FONT_COUNT
+} FontChoice;
 
 void settings_load(void);
 uint8_t settings_interval_s(void);
