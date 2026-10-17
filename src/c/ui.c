@@ -62,12 +62,34 @@ static void prv_unload_fonts(void)
 	}
 }
 
+#if defined(PBL_PLATFORM_EMERY) || defined(PBL_PLATFORM_GABBRO)
+#define SYS_TEXT_FONT FONT_KEY_GOTHIC_18_BOLD
+#define SYS_LARGE 1
+#else
+#define SYS_TEXT_FONT FONT_KEY_GOTHIC_14_BOLD
+#define SYS_LARGE 0
+#endif
+
+// System timer font per FontChoice (index 0 unused: Iosevka), small/large screens.
+// Labels always use Gothic Bold, since the numbers-only fonts lack letters.
+static const char *const SYS_TIMER_FONTS[FONT_COUNT][2] = {
+	[FONT_GOTHIC] = { FONT_KEY_GOTHIC_28_BOLD, FONT_KEY_GOTHIC_28_BOLD },
+	[FONT_LECO] = { FONT_KEY_LECO_32_BOLD_NUMBERS,
+			FONT_KEY_LECO_42_NUMBERS },
+	[FONT_BITHAM] = { FONT_KEY_BITHAM_34_MEDIUM_NUMBERS,
+			  FONT_KEY_BITHAM_42_MEDIUM_NUMBERS },
+	[FONT_DROID_SERIF] = { FONT_KEY_DROID_SERIF_28_BOLD,
+			       FONT_KEY_DROID_SERIF_28_BOLD },
+};
+
 static void prv_load_fonts(void)
 {
-	if (settings_font() == FONT_SYSTEM) {
+	FontChoice choice = settings_font();
+	if (choice != FONT_IOSEVKA) {
 		s_fonts_custom = false;
-		s_timer_font = fonts_get_system_font(SYS_FONT_TIMER);
-		s_text_font = fonts_get_system_font(SYS_FONT_TEXT);
+		s_timer_font = fonts_get_system_font(
+			SYS_TIMER_FONTS[choice][SYS_LARGE]);
+		s_text_font = fonts_get_system_font(SYS_TEXT_FONT);
 	} else {
 		s_fonts_custom = true;
 		s_timer_font = fonts_load_custom_font(
