@@ -10,6 +10,7 @@
 #define PKEY_INTERVAL 5 // int, seconds          (004)
 #define PKEY_THEME 6 // int, Theme            (004)
 #define PKEY_SAFEGUARD 7 // int, minutes, 0 = off
+#define PKEY_FONT 8 // int, FontChoice
 
 typedef struct {
 	uint8_t state; // TimerState

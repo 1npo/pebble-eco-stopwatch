@@ -12,6 +12,7 @@
 static Window *s_window;
 static Layer *s_head, *s_laps, *s_bar;
 static GFont s_timer_font, s_text_font;
+static bool s_fonts_custom;
 static int16_t s_label_w, s_tag_w, s_digit_w;
 
 static void prv_interval_label(char *buf, size_t len)
@@ -51,6 +52,31 @@ static void prv_cache_timer_metrics(void)
 			    GTextOverflowModeTrailingEllipsis,
 			    GTextAlignmentLeft)
 			    .w;
+}
+
+static void prv_unload_fonts(void)
+{
+	if (s_fonts_custom) {
+		fonts_unload_custom_font(s_timer_font);
+		fonts_unload_custom_font(s_text_font);
+	}
+}
+
+static void prv_load_fonts(void)
+{
+	if (settings_font() == FONT_SYSTEM) {
+		s_fonts_custom = false;
+		s_timer_font = fonts_get_system_font(SYS_FONT_TIMER);
+		s_text_font = fonts_get_system_font(SYS_FONT_TEXT);
+	} else {
+		s_fonts_custom = true;
+		s_timer_font = fonts_load_custom_font(
+			resource_get_handle(RES_FONT_TIMER));
+		s_text_font = fonts_load_custom_font(
+			resource_get_handle(RES_FONT_TEXT));
+	}
+	prv_cache_label_width();
+	prv_cache_timer_metrics();
 }
 
 int16_t ui_head_y(bool laps_shown)
@@ -218,12 +244,7 @@ void ui_set_laps_layout(bool shown)
 void ui_create(Window *w)
 {
 	s_window = w;
-	s_timer_font =
-		fonts_load_custom_font(resource_get_handle(RES_FONT_TIMER));
-	s_text_font =
-		fonts_load_custom_font(resource_get_handle(RES_FONT_TEXT));
-	prv_cache_label_width();
-	prv_cache_timer_metrics();
+	prv_load_fonts();
 
 	Layer *root = window_get_root_layer(w);
 	s_head = layer_create(GRect(0, HEAD_Y_CENTER, 2 * CONTENT_CX, HEAD_H));
@@ -245,8 +266,7 @@ void ui_destroy(void)
 	layer_destroy(s_head);
 	layer_destroy(s_laps);
 	layer_destroy(s_bar);
-	fonts_unload_custom_font(s_timer_font);
-	fonts_unload_custom_font(s_text_font);
+	prv_unload_fonts();
 }
 
 void ui_mark_dirty(void)
@@ -270,7 +290,8 @@ void ui_apply_theme(void)
 
 void ui_on_settings_changed(void)
 {
-	prv_cache_label_width();
+	prv_unload_fonts();
+	prv_load_fonts();
 	anim_cancel();
 	ui_set_laps_layout(model_lap_count() > 0);
 	layer_mark_dirty(s_head);

@@ -9,6 +9,7 @@
 static uint8_t s_interval_s = DEFAULT_INTERVAL_S;
 static Theme s_theme = DEFAULT_THEME;
 static uint16_t s_safeguard_min = 0;
+static FontChoice s_font = FONT_IOSEVKA;
 
 static uint8_t prv_valid_interval(int32_t v)
 {
@@ -36,8 +37,14 @@ static Theme prv_valid_theme(int32_t v)
 	return (v < 0 || v > THEME_COLOR) ? DEFAULT_THEME : (Theme)v;
 }
 
+static FontChoice prv_valid_font(int32_t v)
+{
+	return v == FONT_SYSTEM ? FONT_SYSTEM : FONT_IOSEVKA;
+}
+
 void settings_load(void)
 {
+	s_font = FONT_IOSEVKA;
 	s_interval_s = DEFAULT_INTERVAL_S;
 	s_theme = DEFAULT_THEME;
 	s_safeguard_min = 0;
@@ -48,6 +55,8 @@ void settings_load(void)
 	if (persist_exists(PKEY_THEME)) {
 		s_theme = prv_valid_theme(persist_read_int(PKEY_THEME));
 	}
+	if (persist_exists(PKEY_FONT))
+		s_font = prv_valid_font(persist_read_int(PKEY_FONT));
 	if (persist_exists(PKEY_SAFEGUARD)) {
 		s_safeguard_min =
 			prv_valid_safeguard(persist_read_int(PKEY_SAFEGUARD));
@@ -67,6 +76,11 @@ Theme settings_theme(void)
 uint16_t settings_safeguard_min(void)
 {
 	return s_safeguard_min;
+}
+
+FontChoice settings_font(void)
+{
+	return s_font;
 }
 
 // Clay select values arrive as C strings; accept int tuples too. -1 if unparsable.
@@ -126,6 +140,12 @@ static void prv_inbox_received(DictionaryIterator *iter, void *ctx)
 	if (t) {
 		s_safeguard_min = prv_valid_safeguard(prv_tuple_int(t));
 		persist_write_int(PKEY_SAFEGUARD, s_safeguard_min);
+		changed = true;
+	}
+	t = dict_find(iter, MESSAGE_KEY_Font);
+	if (t) {
+		s_font = prv_valid_font(prv_tuple_int(t));
+		persist_write_int(PKEY_FONT, s_font);
 		changed = true;
 	}
 	if (changed)
